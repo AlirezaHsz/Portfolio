@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case Study — Discount Leakage in a $2.3M Retail Business</title>
+<style>
+:root{--acc:#0f766e;--red:#b91c1c;--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--bg:#ffffff;--soft:#f8fafc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:56px 28px 80px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-weight:700}
+h1{font-size:38px;line-height:1.15;letter-spacing:-.02em;margin:14px 0 10px;font-weight:750}
+.sub{color:var(--mut);font-size:17px;margin:0 0 26px;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 34px}
+.tag{font-size:12px;color:#374151;background:var(--soft);border:1px solid var(--line);
+ padding:5px 10px;border-radius:999px}
+h2{font-size:22px;letter-spacing:-.01em;margin:48px 0 6px;font-weight:700}
+h2 .n{color:var(--acc);font-variant-numeric:tabular-nums;margin-right:8px}
+h3{font-size:16px;margin:26px 0 6px}
+p{margin:10px 0}
+.lead{font-size:18px;line-height:1.6}
+.hero{background:linear-gradient(180deg,#f0fdfa,#ffffff);border:1px solid #ccfbf1;
+ border-radius:16px;padding:26px 28px;margin:0 0 34px}
+.hero ul{margin:8px 0 0;padding-left:18px}
+.hero li{margin:7px 0}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+ border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:26px 0}
+.kpi{background:#fff;padding:16px 18px}
+.kv{font-size:22px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kl{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+figure{margin:22px 0 8px;padding:14px 14px 6px;border:1px solid var(--line);border-radius:12px;background:#fff}
+figcaption{font-size:12.5px;color:var(--mut);padding:6px 4px 4px}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);
+ font-weight:600;border-bottom:1px solid var(--line);padding:8px 10px}
+td{padding:9px 10px;border-bottom:1px solid #f1f5f9;font-variant-numeric:tabular-nums}
+td.neg{color:var(--red);font-weight:600}
+.callout{border-left:3px solid var(--acc);background:var(--soft);padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0}
+.callout strong{color:var(--acc)}
+.warn{border-left-color:var(--red)}
+.warn strong{color:var(--red)}
+.recs{display:grid;gap:12px;margin:20px 0}
+.rec{border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;
+ grid-template-columns:1fr auto;gap:6px 16px;align-items:start}
+.rec .t{font-weight:650}
+.rec .d{color:var(--mut);font-size:14px;grid-column:1}
+.rec .v{font-weight:700;color:var(--acc);white-space:nowrap;font-variant-numeric:tabular-nums}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+.note{font-size:13px;color:var(--mut);background:var(--soft);border-radius:10px;padding:14px 16px;margin:18px 0}
+@media(max-width:640px){h1{font-size:29px}.kpis{grid-template-columns:repeat(2,1fr)}.wrap{padding:36px 18px 60px}}
+@media print{body{font-size:12px}.wrap{max-width:none;padding:0}figure{break-inside:avoid}}
+</style></head><body><div class="wrap">
+
+<a href="index.html" style="font-size:13px;color:#6b7280;text-decoration:none;display:inline-block;margin-bottom:20px">&larr; Services</a>
+<div class="eyebrow">Case study · Retail &amp; e-commerce analytics</div>
+<h1>32% of revenue was hiding a 2.5% margin — and $87K of profit was being discounted away</h1>
+<p class="sub">A profitability and retention teardown of a four-year, $2.3M retail dataset. The brief:
+find where margin leaks, quantify it, and say what to change on Monday morning.</p>
+<div class="meta">
+<span class="tag">9,994 order lines</span><span class="tag">2014 – 2017</span>
+<span class="tag">793 customers</span><span class="tag">Python · pandas</span>
+<span class="tag">RFM segmentation</span><span class="tag">Public sample dataset</span>
+</div>
+
+<div class="hero">
+<div class="eyebrow" style="margin-bottom:8px">Executive summary</div>
+<ul>
+<li><strong>One in five orders loses money</strong> (20.4% of 5,009 orders). The cause is not cost — it is discounting.</li>
+<li>Orders discounted above 20% are <strong>15.8% of revenue and -$135,376 of profit</strong>. Capping discounts at 20% would have recovered
+<strong>$87,539</strong> — <strong>30.6% of total company profit</strong>.</li>
+<li>Furniture is <strong>32.3% of revenue at a 2.49% margin</strong>.
+Tables alone lost $17,725 on $206,966 of sales.</li>
+<li>145 “at-risk” customers hold <strong>21.5% of revenue at the highest margin in the book (15.8%)</strong> — a retention problem worth more than any new-customer campaign.</li>
+</ul>
+</div>
+
+<div class="kpis"><div class="kpi"><div class="kv">$2,297,201</div><div class="kl">Revenue analysed</div></div><div class="kpi"><div class="kv">$286,397</div><div class="kl">Total profit</div></div><div class="kpi"><div class="kv">12.47%</div><div class="kl">Net margin</div></div><div class="kpi"><div class="kv">20.4%</div><div class="kl">Orders losing money</div></div><div class="kpi"><div class="kv">793</div><div class="kl">Customers</div></div><div class="kpi"><div class="kv">5,009</div><div class="kl">Orders</div></div></div>
+
+<h2><span class="n">01</span>Growth without margin</h2>
+<p class="lead">Revenue grew 51% from 2014 to 2017. Margin did not move: 10.2% → 12.7%, with a peak of 13.4% in 2016.
+The business got bigger without getting more profitable per dollar.</p>
+<figure><svg viewBox="0 0 780 240" width="100%" role="img" aria-label="Monthly sales and profit 2014-2017">
+<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#0f766e" stop-opacity=".28"/><stop offset="100%" stop-color="#0f766e" stop-opacity="0"/></linearGradient></defs>
+<line x1="44" y1="162.0" x2="772" y2="162.0" stroke="#e5e7eb"/><text x="38" y="165.0" font-size="9" fill="#6b7280" text-anchor="end">29k</text><line x1="44" y1="112.0" x2="772" y2="112.0" stroke="#e5e7eb"/><text x="38" y="115.0" font-size="9" fill="#6b7280" text-anchor="end">59k</text><line x1="44" y1="62.0" x2="772" y2="62.0" stroke="#e5e7eb"/><text x="38" y="65.0" font-size="9" fill="#6b7280" text-anchor="end">88k</text><line x1="44" y1="12.0" x2="772" y2="12.0" stroke="#e5e7eb"/><text x="38" y="15.0" font-size="9" fill="#6b7280" text-anchor="end">118k</text><line x1="44.0" y1="12" x2="44.0" y2="212" stroke="#e5e7eb"/><text x="44.0" y="232" font-size="10" fill="#6b7280" text-anchor="middle">2014</text><line x1="229.9" y1="12" x2="229.9" y2="212" stroke="#e5e7eb"/><text x="229.9" y="232" font-size="10" fill="#6b7280" text-anchor="middle">2015</text><line x1="415.7" y1="12" x2="415.7" y2="212" stroke="#e5e7eb"/><text x="415.7" y="232" font-size="10" fill="#6b7280" text-anchor="middle">2016</text><line x1="601.6" y1="12" x2="601.6" y2="212" stroke="#e5e7eb"/><text x="601.6" y="232" font-size="10" fill="#6b7280" text-anchor="middle">2017</text>
+<path d="M 44.0,188.0 L 59.5,204.4 L 75.0,118.0 L 90.5,164.2 L 106.0,172.1 L 121.4,153.6 L 136.9,154.7 L 152.4,164.9 L 167.9,73.9 L 183.4,158.9 L 198.9,79.2 L 214.4,94.6 L 229.9,181.3 L 245.4,191.8 L 260.9,146.6 L 276.3,154.3 L 291.8,161.1 L 307.3,170.1 L 322.8,163.4 L 338.3,149.7 L 353.8,102.9 L 369.3,159.0 L 384.8,83.7 L 400.3,85.5 L 415.7,180.7 L 431.2,173.2 L 446.7,124.7 L 462.2,146.6 L 477.7,115.8 L 493.2,143.9 L 508.7,145.7 L 524.2,159.5 L 539.7,88.0 L 555.1,111.2 L 570.6,77.9 L 586.1,48.2 L 601.6,137.8 L 617.1,177.7 L 632.6,112.6 L 648.1,150.3 L 663.6,137.3 L 679.1,122.5 L 694.6,135.6 L 710.0,105.4 L 725.5,63.6 L 741.0,80.7 L 756.5,12.0 L 772.0,70.5 L 772.0,212 L 44.0,212 Z" fill="url(#g1)"/>
+<path d="M 44.0,188.0 L 59.5,204.4 L 75.0,118.0 L 90.5,164.2 L 106.0,172.1 L 121.4,153.6 L 136.9,154.7 L 152.4,164.9 L 167.9,73.9 L 183.4,158.9 L 198.9,79.2 L 214.4,94.6 L 229.9,181.3 L 245.4,191.8 L 260.9,146.6 L 276.3,154.3 L 291.8,161.1 L 307.3,170.1 L 322.8,163.4 L 338.3,149.7 L 353.8,102.9 L 369.3,159.0 L 384.8,83.7 L 400.3,85.5 L 415.7,180.7 L 431.2,173.2 L 446.7,124.7 L 462.2,146.6 L 477.7,115.8 L 493.2,143.9 L 508.7,145.7 L 524.2,159.5 L 539.7,88.0 L 555.1,111.2 L 570.6,77.9 L 586.1,48.2 L 601.6,137.8 L 617.1,177.7 L 632.6,112.6 L 648.1,150.3 L 663.6,137.3 L 679.1,122.5 L 694.6,135.6 L 710.0,105.4 L 725.5,63.6 L 741.0,80.7 L 756.5,12.0 L 772.0,70.5" fill="none" stroke="#0f766e" stroke-width="2"/>
+<polyline points="44.0,184.6 59.5,202.4 75.0,206.4 90.5,173.0 106.0,181.4 121.4,156.4 136.9,221.4 152.4,152.5 167.9,118.9 183.4,173.4 198.9,108.1 214.4,111.5 229.9,248.7 245.4,180.5 260.9,103.2 276.3,165.2 291.8,159.8 307.3,174.7 322.8,175.2 338.3,152.1 353.8,120.2 369.3,180.5 384.8,72.5 400.3,122.4 415.7,180.4 431.2,156.0 446.7,171.6 462.2,178.7 477.7,115.1 493.2,158.9 508.7,162.4 524.2,188.9 539.7,107.7 555.1,30.4 570.6,167.1 586.1,12.0 601.6,132.2 617.1,194.0 632.6,47.0 648.1,201.6 663.6,141.1 679.1,120.0 694.6,134.3 710.0,110.9 725.5,89.1 741.0,108.3 756.5,103.6 772.0,117.1" fill="none" stroke="#111827" stroke-width="1.4" stroke-dasharray="3 3" opacity=".55"/>
+<text x="44" y="10" font-size="10" fill="#6b7280">Monthly sales (area) · monthly profit (dashed)</text>
+</svg>
+<figcaption>Monthly revenue (area) against monthly profit (dashed). Profit tracks revenue in level but not in rate —
+the gap is what the discount analysis below explains.</figcaption></figure>
+<table><thead><tr><th>Year</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead>
+<tbody><tr><td>2014</td><td>$484,248</td><td>$49,544</td><td class="">10.23%</td></tr><tr><td>2015</td><td>$470,533</td><td>$61,619</td><td class="">13.1%</td></tr><tr><td>2016</td><td>$609,206</td><td>$81,795</td><td class="">13.43%</td></tr><tr><td>2017</td><td>$733,215</td><td>$93,439</td><td class="">12.74%</td></tr></tbody></table>
+
+<h2><span class="n">02</span>The discount cliff</h2>
+<p>Margin does not decline gradually with discount — it falls off a cliff between 20% and 30%.</p>
+<figure><svg viewBox="0 0 780 268" width="100%" role="img" aria-label="Profit margin by discount band"><line x1="46" y1="71.2" x2="770" y2="71.2" stroke="#111827" stroke-width="1"/><rect x="65.7" y="41.8" width="64.1" height="29.5" fill="#0f766e" rx="2" opacity=".85"/><text x="97.7" y="34.8" font-size="10" fill="#0f766e" text-anchor="middle" font-weight="600">30%</text><text x="97.7" y="244" font-size="10" fill="#111827" text-anchor="middle">0%</text><text x="97.7" y="257" font-size="9" fill="#6b7280" text-anchor="middle">47% of rev</text><rect x="169.1" y="54.6" width="64.1" height="16.6" fill="#0f766e" rx="2" opacity=".85"/><text x="201.1" y="47.6" font-size="10" fill="#0f766e" text-anchor="middle" font-weight="600">17%</text><text x="201.1" y="244" font-size="10" fill="#111827" text-anchor="middle">1-10%</text><text x="201.1" y="257" font-size="9" fill="#6b7280" text-anchor="middle">2% of rev</text><rect x="272.5" y="59.7" width="64.1" height="11.6" fill="#0f766e" rx="2" opacity=".85"/><text x="304.6" y="52.7" font-size="10" fill="#0f766e" text-anchor="middle" font-weight="600">12%</text><text x="304.6" y="244" font-size="10" fill="#111827" text-anchor="middle">11-20%</text><text x="304.6" y="257" font-size="9" fill="#6b7280" text-anchor="middle">34% of rev</text><rect x="375.9" y="71.2" width="64.1" height="10.0" fill="#b91c1c" rx="2" opacity=".85"/><text x="408.0" y="96.3" font-size="10" fill="#b91c1c" text-anchor="middle" font-weight="600">-10%</text><text x="408.0" y="244" font-size="10" fill="#111827" text-anchor="middle">21-30%</text><text x="408.0" y="257" font-size="9" fill="#6b7280" text-anchor="middle">4% of rev</text><rect x="479.4" y="71.2" width="64.1" height="19.4" fill="#b91c1c" rx="2" opacity=".85"/><text x="511.4" y="105.6" font-size="10" fill="#b91c1c" text-anchor="middle" font-weight="600">-19%</text><text x="511.4" y="244" font-size="10" fill="#111827" text-anchor="middle">31-40%</text><text x="511.4" y="257" font-size="9" fill="#6b7280" text-anchor="middle">6% of rev</text><rect x="582.8" y="71.2" width="64.1" height="35.7" fill="#b91c1c" rx="2" opacity=".85"/><text x="614.9" y="121.9" font-size="10" fill="#b91c1c" text-anchor="middle" font-weight="600">-36%</text><text x="614.9" y="244" font-size="10" fill="#111827" text-anchor="middle">41-50%</text><text x="614.9" y="257" font-size="9" fill="#6b7280" text-anchor="middle">3% of rev</text><rect x="686.2" y="71.2" width="64.1" height="119.0" fill="#b91c1c" rx="2" opacity=".85"/><text x="718.3" y="205.2" font-size="10" fill="#b91c1c" text-anchor="middle" font-weight="600">-119%</text><text x="718.3" y="244" font-size="10" fill="#111827" text-anchor="middle">50%+</text><text x="718.3" y="257" font-size="9" fill="#6b7280" text-anchor="middle">3% of rev</text><text x="38" y="22" font-size="9" fill="#6b7280" text-anchor="end">margin</text></svg>
+<figcaption>Profit margin by discount band, with each band's share of total revenue underneath.
+Everything above 20% is loss-making; the 50%+ band returns −119%.</figcaption></figure>
+<div class="callout warn"><strong>The number that matters:</strong> 1,393 order lines carry a discount above 20%.
+They generate $362,770 of revenue and <strong>-$135,376 of profit</strong>.
+Capping every one of them at 20% would have added <strong>$87,539</strong> —
+30.6% of the profit the company actually made.</div>
+
+<h2><span class="n">03</span>Where the money is lost</h2>
+<p>Furniture carries a third of revenue and almost none of the profit. Two sub-categories are structurally negative.</p>
+<figure><svg viewBox="0 0 780 100" width="100%" role="img"><text x="0" y="19" font-size="11" fill="#111827">Tables</text><rect x="190" y="8" width="520.0" height="16" fill="#b91c1c" rx="2" opacity=".85"/><text x="716.0" y="20" font-size="10" fill="#6b7280">-$17,725</text><text x="0" y="49" font-size="11" fill="#111827">Bookcases</text><rect x="190" y="38" width="101.9" height="16" fill="#b91c1c" rx="2" opacity=".85"/><text x="297.9" y="50" font-size="10" fill="#6b7280">-$3,473</text><text x="0" y="79" font-size="11" fill="#111827">Supplies</text><rect x="190" y="68" width="34.9" height="16" fill="#b91c1c" rx="2" opacity=".85"/><text x="230.9" y="80" font-size="10" fill="#6b7280">-$1,189</text></svg>
+<figcaption>Bar length shows the size of the loss. All three sub-categories are negative over 2014–2017 (USD).</figcaption></figure>
+<table><thead><tr><th>Sub-category</th><th>Category</th><th>Revenue</th><th>Profit</th><th>Margin</th></tr></thead>
+<tbody><tr><td>Tables</td><td>Furniture</td><td>$206,966</td><td class="neg">-$17,725</td><td class="neg">-8.56%</td></tr><tr><td>Bookcases</td><td>Furniture</td><td>$114,880</td><td class="neg">-$3,473</td><td class="neg">-3.02%</td></tr><tr><td>Supplies</td><td>Office Supplies</td><td>$46,674</td><td class="neg">-$1,189</td><td class="neg">-2.55%</td></tr></tbody></table>
+<p><strong>Read:</strong> Tables are not a “low-margin” product, they are a <em>loss-making</em> product sold at scale
+($206,966 of sales). The fix is not “sell more tables” — it is repricing, bundling, or exiting the
+discount tiers that make them sell.</p>
+
+<h2><span class="n">04</span>Retention beats acquisition</h2>
+<p>Customer value is remarkably evenly spread — the top 10 customers are only 6.7% of revenue, so there is no
+single-account risk. The opportunity is in the middle: customers who used to buy and have gone quiet.</p>
+<figure><svg viewBox="0 0 780 130" width="100%" role="img"><text x="0" y="19" font-size="11" fill="#111827">Champions</text><rect x="190" y="8" width="520.0" height="16" fill="#0f766e" rx="2" opacity=".85"/><text x="716.0" y="20" font-size="10" fill="#6b7280">29.4%</text><text x="0" y="49" font-size="11" fill="#111827">Loyal</text><rect x="190" y="38" width="413.4" height="16" fill="#0f766e" rx="2" opacity=".85"/><text x="609.4" y="50" font-size="10" fill="#6b7280">23.4%</text><text x="0" y="79" font-size="11" fill="#111827">At risk</text><rect x="190" y="68" width="380.5" height="16" fill="#0f766e" rx="2" opacity=".85"/><text x="576.5" y="80" font-size="10" fill="#6b7280">21.5%</text><text x="0" y="109" font-size="11" fill="#111827">Lost</text><rect x="190" y="98" width="221.6" height="16" fill="#0f766e" rx="2" opacity=".85"/><text x="417.6" y="110" font-size="10" fill="#6b7280">12.5%</text></svg>
+<figcaption>RFM segments by share of total revenue.</figcaption></figure>
+<table><thead><tr><th>Segment</th><th>Customers</th><th>Revenue</th><th>Share</th><th>Margin</th></tr></thead>
+<tbody><tr><td>Champions</td><td>167</td><td>$675,850</td><td>29.42%</td><td>12.22%</td></tr><tr><td>Loyal</td><td>164</td><td>$537,225</td><td>23.39%</td><td>11.07%</td></tr><tr><td>At risk</td><td>145</td><td>$494,541</td><td>21.53%</td><td>15.84%</td></tr><tr><td>Lost</td><td>171</td><td>$287,983</td><td>12.54%</td><td>11.09%</td></tr><tr><td>New / promising</td><td>89</td><td>$159,851</td><td>6.96%</td><td>15.14%</td></tr><tr><td>Needs attention</td><td>57</td><td>$141,751</td><td>6.17%</td><td>6.95%</td></tr></tbody></table>
+<div class="callout"><strong>The insight:</strong> the “at risk” group (145 customers, 21.5% of revenue) has the
+<em>highest</em> margin in the book at 15.8% — above champions. A win-back sequence aimed at them protects more profit
+than the same spend on new acquisition.</div>
+
+<h2><span class="n">05</span>What I would change</h2>
+<div class="recs">
+<div class="rec"><div class="t">1. Hard-cap discounts at 20% outside a named exception list</div>
+<div class="d">Applies to 1,393 historical order lines. Requires an approval step in the quote flow for anything above 20%.</div>
+<div class="v">+$87,539</div></div>
+<div class="rec"><div class="t">2. Reprice or bundle Tables and Bookcases</div>
+<div class="d">Both are negative at current discount depth. Either raise list price to protect margin at the same discount, or exit the deep-discount tier.</div>
+<div class="v">+$21,198</div></div>
+<div class="rec"><div class="t">3. Launch a win-back sequence for the at-risk segment</div>
+<div class="d">145 customers, 21.5% of revenue, 15.8% margin. A 10% recovery of that revenue is worth $7,814 in profit.</div>
+<div class="v">retention</div></div>
+<div class="rec"><div class="t">4. Add a margin gate to the monthly reporting pack</div>
+<div class="d">Revenue-only dashboards let this run for four years. A discount-vs-margin view by rep and by sub-category makes the leak visible weekly.</div>
+<div class="v">prevention</div></div>
+</div>
+
+<h2><span class="n">06</span>Method &amp; data quality</h2>
+<p>Before any analysis: 9,994 rows audited, 0 duplicates, 0 columns with
+missing values, 0 unparseable dates. Date range 2014-01-03 → 2017-12-30.
+Discount bands are right-closed; RFM uses quintile scoring on recency, frequency and monetary value, with
+recency measured from the day after the last order in the dataset.</p>
+<div class="note"><strong>Honest labelling:</strong> this analysis uses the public “Sample Superstore” dataset that ships with
+Tableau — 9,994 line items, 2014–2017. It is a practice dataset, not a client engagement. Every number above was computed
+from the raw file, and the method is exactly what I would run on your order export.</div>
+
+<footer>
+Prepared by Alireza Hosseinzadeh · Data &amp; reporting analyst ·
+Python (pandas), SQL, Power BI, Excel · Available for fixed-scope projects.
+</footer>
+</div></body></html>
